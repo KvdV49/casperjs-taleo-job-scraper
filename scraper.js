@@ -4,6 +4,8 @@
  * Usage: $ casperjs scraper.js 
  */
 var casper = require("casper").create({
+    // Extend default 5sec wait timeout
+    waitTimeout: 10000,
     pageSettings: {
         userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:23.0) Gecko/20130404 Firefox/23.0"
     }
@@ -42,6 +44,10 @@ function getJobs() {
 }
 
 var processPage = function() {
+    // Now you can see what happens
+    this.echo("Processing..");
+    this.capture('page.png');
+    
     jobs = this.evaluate(getJobs);
     require('utils').dump(jobs);
 
@@ -59,6 +65,7 @@ var processPage = function() {
 };
 
 casper.start(url);
-casper.waitForSelector('table#jobs', processPage, terminate);
+// Do not wait for 'table#jobs', it will start processPage to soon
+casper.waitForSelector('tr[id^="job"]', processPage, terminate);
 casper.run();
 
